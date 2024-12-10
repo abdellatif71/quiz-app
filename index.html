@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+  <style>body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+}
+
+#quiz-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.hidden {
+    display: none;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#answers button {
+    margin: 5px;
+    width: 100%;
+}
+
+#timer {
+    margin-top: 20px;
+    font-size: 18px;
+    color: red;
+}
+</style>
+</head>
+<body>
+    <div id="quiz-container">
+        <div id="start-screen">
+            <h1>Willkommen zum Quiz!</h1>
+            <button id="start-btn">Quiz starten</button>
+        </div>
+        <div id="quiz-screen" class="hidden">
+            <div id="question-container">
+                <p id="question">Frage wird hier angezeigt...</p>
+                <div id="answers">
+                    <!-- Antwortoptionen werden dynamisch hinzugefügt -->
+                </div>
+            </div>
+            <div id="timer">Zeit: <span id="time">30</span> Sekunden</div>
+        </div>
+        <div id="end-screen" class="hidden">
+            <h2>Quiz abgeschlossen!</h2>
+            <p id="final-score">Punktzahl: 0</p>
+            <button id="restart-btn">Nochmals versuchen</button>
+        </div>
+    </div>
+    <script>
+        const startBtn = document.getElementById("start-btn");
+    const quizScreen = document.getElementById("quiz-screen");
+    const startScreen = document.getElementById("start-screen");
+    const endScreen = document.getElementById("end-screen");
+    const questionEl = document.getElementById("question");
+    const answersEl = document.getElementById("answers");
+    const finalScoreEl = document.getElementById("final-score");
+    const restartBtn = document.getElementById("restart-btn");
+    const timerEl = document.getElementById("time");
+    
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let time = 30;
+    let timer;
+    
+    // Fragen und Antworten
+    const questions = [
+    {
+        question: "Was ist die Hauptstadt von Deutschland?",
+        answers: ["Berlin", "Hamburg", "München", "Frankfurt"],
+        correct: 0
+    },
+    {
+        question: "Wie viele Kontinente gibt es?",
+        answers: ["5", "6", "7", "8"],
+        correct: 2
+    },
+    {
+        question: "Welche Farbe hat der Himmel?",
+        answers: ["Rot", "Blau", "Grün", "Gelb"],
+        correct: 1
+    },
+    {
+        question: "Wie viele Tage hat ein Schaltjahr?",
+        answers: ["364", "365", "366", "367"],
+        correct: 2
+    },
+    {
+        question: "Wer hat die Relativitätstheorie entwickelt?",
+        answers: ["Isaac Newton", "Albert Einstein", "Nikola Tesla", "Galileo Galilei"],
+        correct: 1
+    },
+    {
+        question: "Welches Land ist für Sushi bekannt?",
+        answers: ["China", "Japan", "Thailand", "Vietnam"],
+        correct: 1
+    },
+    {
+        question: "Welcher Planet ist der größte im Sonnensystem?",
+        answers: ["Erde", "Mars", "Jupiter", "Saturn"],
+        correct: 2
+    },
+    {
+        question: "Wie viele Monate haben 28 Tage?",
+        answers: ["1", "12", "6", "9"],
+        correct: 1
+    }
+];
+
+    
+    // Quiz starten
+    startBtn.addEventListener("click", startQuiz);
+    
+    function startQuiz() {
+        startScreen.classList.add("hidden");
+        quizScreen.classList.remove("hidden");
+        currentQuestionIndex = 0;
+        score = 0;
+        time = 30;
+        startTimer();
+        showQuestion();
+    }
+    
+    function showQuestion() {
+        const currentQuestion = questions[currentQuestionIndex];
+        questionEl.textContent = currentQuestion.question;
+        answersEl.innerHTML = "";
+    
+        currentQuestion.answers.forEach((answer, index) => {
+            const btn = document.createElement("button");
+            btn.textContent = answer;
+            btn.classList.add("answer-btn");
+            btn.addEventListener("click", () => checkAnswer(index));
+            answersEl.appendChild(btn);
+        });
+    }
+    
+    function checkAnswer(index) {
+        if (index === questions[currentQuestionIndex].correct) {
+            score++;
+        }
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            showQuestion();
+        } else {
+            endQuiz();
+        }
+    }
+    
+    function startTimer() {
+        timer = setInterval(() => {
+            time--;
+            timerEl.textContent = time;
+            if (time === 0) {
+                endQuiz();
+            }
+        }, 1000);
+    }
+    
+    function endQuiz() {
+        clearInterval(timer);
+        quizScreen.classList.add("hidden");
+        endScreen.classList.remove("hidden");
+        finalScoreEl.textContent = `Punktzahl: ${score} von ${questions.length}`;
+    }
+    
+    restartBtn.addEventListener("click", () => {
+        endScreen.classList.add("hidden");
+        startScreen.classList.remove("hidden");
+    });
+    </script>
+</body>
+</html>
